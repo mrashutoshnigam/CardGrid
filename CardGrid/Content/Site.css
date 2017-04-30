@@ -1,0 +1,103 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+
+.x_title {
+    margin: 15px;
+}
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+.card-paginaton {
+    float: right;
+}
+.card-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+    .card-row > [class*='col-'] {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-row .thumbnail,
+    .card-row .caption {
+        flex-direction: column;
+        display: flex;
+        flex: 1 0 auto;
+        height: auto;
+        position: relative;
+    }
+    .card-row table tr td{
+        padding:10px 5px;
+        border-top:1px solid #ddd;
+    }
+    .card-row table tr[selected="selected"] {
+        border: 1px solid #73879C;
+        color: indianred;
+    }
+.card-text {
+    flex-grow: 1;
+}
+
+.card-row img {
+    min-width: 0;
+    width: 100%;
+}
+
+.card-row ul {
+    text-align: left;
+    display: inline-grid;
+    float: left;
+}
+
+.card-count {
+    margin: 0px 10px 0px 10px;
+}
+.thumbnail {
+    overflow: hidden;
+    font-size:15px !important;
+}
+.thumbnail h5 {
+    font-size:12px !important;
+}
+
+.thumbnail[selected="selected"] {
+    border: 1px solid #73879C;
+    transition: background-color 0.5s ease;    
+}
+
+.thumbnail:hover {
+    border: 1px solid #003973;
+}
+.col-center {
+    display: inline;
+    float: none;
+    margin: 0 auto;
+}
+.pagination {
+    margin: 0;
+}
+.form-control-feedback {
+    position: absolute;
+    top: -6px;
+    right: 11px;
+    z-index: 2;
+    display: block;
+    width: 43px;
+    height: 43px;
+    line-height: 43px;
+    text-align: center;
+}

@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    "sourceMap": true,
+    "target": "es5",
+    "outDir": "./Scripts/App",
+    "allowJs": true
+
+  },
+  "files": [
+    "./typeScript/CardGrid.ts"//,
+    //"./typeScript/OtherPlugin.ts",
+    //"./typeScript/BreadCrumb.ts"
+
+  ],
+  "compileOnSave": true
+
+}
