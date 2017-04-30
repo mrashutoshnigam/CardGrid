@@ -2,8 +2,8 @@
 Grid mixed with the features of Card and Table Views
 This jQuery plugin is to create a Grid Control with Card and Table based on JSON Data and custom templates for Cards. This is Designed to use with [Bootstrap 3](http://getbootstrap.com) or more
 
-![Screenshot](screenshots/cardgrid_Employee_ScreenShot.png)
-![Screenshot](screenshots/cardgrid_Employee_TableView.png)
+![Screenshot](https://github.com/ashutosh456/CardGrid/blob/master/ScreenShots/cardgrid_Employee_ScreenShot.png)
+![Screenshot](https://github.com/ashutosh456/CardGrid/blob/master/ScreenShots/cardgrid_Employee_TableView.png)
 
 ## Help In Project
 Currently Project is deployed with ASP.NET MVC Project. This plugin is written in TypeScript. Source code is available in typescript folder.
