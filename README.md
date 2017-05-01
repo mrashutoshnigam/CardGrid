@@ -2,11 +2,11 @@
 Grid mixed with the features of Card and Table Views
 This jQuery plugin is to create a Grid Control with Card and Table based on JSON Data and custom templates for Cards. This is Designed to use with [Bootstrap 3](http://getbootstrap.com) or more
 
-![Screenshot](screenshots/cardgrid_Employee_ScreenShot.png)
-![Screenshot](screenshots/cardgrid_Employee_TableView.png)
+![Screenshot](https://github.com/ashutosh456/CardGrid/blob/master/ScreenShots/cardgrid_Employee_ScreenShot.png)
+![Screenshot](https://github.com/ashutosh456/CardGrid/blob/master/ScreenShots/cardgrid_Employee_TableView.png)
 
 ## Help In Project
-Currently Project is deployed with ASP.NET MVC Project. This plugin is written in TypeScript. Source code is available in typescript folder.
+Currently Project is deployed with ASP.NET MVC Project. This plugin is written in TypeScript.
 ## Required
 * [jQuery](http://jquery.com/)
 * [Bootstrap](http://getbootstrap.com/)
@@ -17,6 +17,60 @@ The __CardGrid plugin__ is written by Ashutosh Nigam, @ashutoshrewa
 * [ashutoshnigam.com](http://www.ashutoshnigam.com/)
 * [Facebook](https://www.facebook.com/ashutosh.nigam2)
 * [Twitter](https://twitter.com/ashutoshrewa)
+## Options
+### Grid
+    url: string;                                // URL To get Data
+    type: string;                               // GET/POST
+    data?: any;                                 // Optional : JSON Data
+    pagination?: boolean;                       // Optional : Pagination True/False
+    searchBox: boolean;                         // Optional : Show Search Box true/false
+    buttons?: Array<Button>;                    // Optional : [Buttons] Buttons to display
+    success?: any;                              // Optional : function(data){ }
+    recordsPerPage?: Array<number>;             // Optional : [Numbers] Default : 12
+    template?: (data: any) => HTMLDivElement;   // Optional : function(data) {} : Cards Template 
+    cols?: Array<column>;                       // Optional : [Column] : Columns for Table View
+    currentView?: string;                       // Optional : 'Get and Set Default View - card/table; Default is 'çard'
+    itemsPerRow: number;                        // Optional : Itemps per Row; Default : 4
+    sortCols?: Array<SortColumn>;               // Optional : [SortColumn] : List of Columns for Sorting; Default: Id
+    multiSelect?: boolean;                      // Optional : Allow MultiSelect; Default: true
+    afterGridRender?: () => void;               // Optional : function() { }  Execute after Rendering Grid
+    queryParams?: any;                          // Optional : JSON Array: To Set Query Params using querystring
+    beforeSend?: any;                           // Optional : function() { }: to perform addional before sending request for Data. 
+    beforeGridLoad?: (data: any) => any;        // Optional : function(data) { } : Peform Opertion before Loading grid. 
+### Pagination Parameters 
+    total: number;                              // Total No of Records Available
+    noOfPages: number;                          // No of Pages
+    rows: number;                               // Size of Page / No of Items per Page
+    page: number;                               // Current Selected Page
+    searchParam?: string;                       // Search Text
+    sidx?: string;                              // Sorting Field; Default- first sort column
+    sord?: string                               // Sorting Direction - asc/desc
+### Columns (Only Application in Table View)
+    id: string;                                 // Column Name from Data
+    hidden?: boolean;                           // Optional : Visible/Hidden ; Default: false
+    sortable?: boolean;                         // ### Not Implemented Now
+    title: string;                              // Title to display in Column View
+    template?: (data: any) => HTMLDivElement;   // function(data){ } : to define custom logic or template
+    width?: number;                             // width
+### Sort Columns
+    text: string;                               // Text to Display ; Exp: "Date Of Birth"
+    value: string;                              // Value   ; Exp: "dob"
+### Buttons
+    text: string;                               // Text to Display in Button
+    className?: string;                         // css ClassName 
+    id?: string;                                // Button Id
+    enable?: boolean;                           // Enable/Disable Button, Default : true
+    hidden?: boolean;                           // Default : false
+    onClick: (data: any) => void;               // function(data) { }; onclick event
+    buttons?: Array<DropDownButton>;            // [DropDownButtons] Optional: is to add DropDown Buttons 
+### Drop Down Buttons
+    text: string;                               // Text to Display in Button   
+    id?: string;                                // Button Id
+    enable?: boolean;                           // Enable/Disable Button, Default : true
+    hidden?: boolean;                           // Default : false
+    onClick: (data: any) => void;               // function(data) { }; onclick event
+    
+    
 ## Getting Started
 
 * Create a Div with name "card-grid
@@ -33,12 +87,8 @@ The __CardGrid plugin__ is written by Ashutosh Nigam, @ashutoshrewa
     <script src="~/Scripts/modernizr-2.6.2.js"></script>  
     <link href="~/Content/cardgrid.css" rel="stylesheet" type="text/css" />
     ```
- * Add Javascript File  
+ * Add Javascript Libraries  
      ``` 
-    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
-    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />   
-    <script src="~/Scripts/modernizr-2.6.2.js"></script>  
-    <link href="~/Content/cardgrid.css" rel="stylesheet" type="text/css" />
     <script src="~/Scripts/jquery-3.1.1.min.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
     <script src="~/Scripts/jquery.bootpag.min.js"></script>
