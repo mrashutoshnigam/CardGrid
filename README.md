@@ -6,7 +6,7 @@ This jQuery plugin is to create a Grid Control with Card and Table based on JSON
 ![Screenshot](https://github.com/ashutosh456/CardGrid/blob/master/ScreenShots/cardgrid_Employee_TableView.png)
 
 ## Help In Project
-Currently Project is deployed with ASP.NET MVC Project. This plugin is written in TypeScript. Source code is available in typescript folder.
+Currently Project is deployed with ASP.NET MVC Project. This plugin is written in TypeScript.
 ## Required
 * [jQuery](http://jquery.com/)
 * [Bootstrap](http://getbootstrap.com/)
