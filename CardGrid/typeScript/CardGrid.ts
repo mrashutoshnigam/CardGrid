@@ -2,6 +2,11 @@
 ///<reference path="./Library/jquery.d.ts"/>
 ///<reference path="./Library/bootstrap.d.ts"/>
 ///<reference path="./Library/bootpag.d.ts"/>
+/*
+    Author  : Ashutosh Nigam
+    Website : http://www.ashutoshnigam.com
+    Email   : ashutosh.nigam@live.com 
+*/
 
 /* Button Type */
 interface DropDownButton {
