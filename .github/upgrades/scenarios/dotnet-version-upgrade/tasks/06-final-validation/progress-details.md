@@ -15,5 +15,9 @@
   - set a real connection string; the default is LocalDB with `AttachDbFilename`
   - restrict `AllowedHosts`
   - keep `Database:*` switches off unless the database should be created or seeded
-- Optional: move from EF6 to EF Core, enable nullable reference types, and adopt Central Package Management.
+- Done after the upgrade (branch `feature/ef-core`): `CardGrid.Core` moved from EF6 to EF Core 10.
+  - The schema is still created with `EnsureCreated` and matches the EF6 schema column for column.
+  - The data path is async.
+  - Switch to EF Core migrations once the legacy EF6 app is retired. Existing databases will need a baseline migration.
+- Optional: enable nullable reference types and adopt Central Package Management.
 - The card template loads images from `unsplash.it`, an external host that redirects to picsum.photos. This was kept from the legacy app.

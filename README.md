@@ -6,7 +6,7 @@ This jQuery plugin is to create a Grid Control with Card and Table based on JSON
 ![Screenshot](https://github.com/ashutosh456/CardGrid/blob/master/ScreenShots/cardgrid_Employee_TableView.png)
 
 ## Help In Project
-The sample app runs on ASP.NET Core / .NET 10 (`CardGrid.Core`). The plugin is written in TypeScript (`CardGrid.Core/Scripts/cardgrid.ts`, compiled to `wwwroot/js/cardgrid.js`) and targets Bootstrap 5.
+The sample app runs on ASP.NET Core / .NET 10 (`CardGrid.Core`) with EF Core 10 on SQL Server. The plugin is written in TypeScript (`CardGrid.Core/Scripts/cardgrid.ts`, compiled to `wwwroot/js/cardgrid.js`) and targets Bootstrap 5.
 
 The original ASP.NET MVC 5 / .NET Framework 4.8 app (`CardGrid`) is still in the solution as the legacy side of a side-by-side migration. It is no longer needed to run the sample.
 
@@ -17,7 +17,7 @@ Requires the .NET 10 SDK and SQL Server LocalDB.
 dotnet run --project CardGrid.Core
 ```
 
-In `Development`, the host creates the LocalDB database (`CardGrid/App_Data/CardGridDB.mdf`, shared with the legacy app) and seeds 1000 sample employees if the table is empty. These settings live under `Database` in `appsettings*.json`:
+In `Development`, the host creates the LocalDB database (EF Core `EnsureCreated`, with the same schema the legacy EF6 app uses). The database file is `CardGrid/App_Data/CardGridDB.mdf`, shared with the legacy app. It also seeds 1000 sample employees if the table is empty. These settings live under `Database` in `appsettings*.json`:
 
 | Setting | Default | Development |
 |---|---|---|
@@ -31,7 +31,11 @@ Set `ProxyTo` (for example `http://localhost:61061`) to forward routes that `Car
 ```sh
 dotnet test CardGridTests
 ```
-The tests use an in-memory employee store and do not need SQL Server.
+Most tests run EF Core on SQLite in-memory. Tests in the `SqlServer` category use a throwaway LocalDB database to check schema parity with EF6, seeding and SQL translation. They report Inconclusive when LocalDB is not installed. To skip them, run:
+
+```sh
+dotnet test CardGridTests --filter TestCategory!=SqlServer
+```
 ## Required
 * [jQuery](http://jquery.com/)
 * [Bootstrap](http://getbootstrap.com/)
