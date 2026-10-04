@@ -44,10 +44,13 @@ app.MapControllerRoute(
     pattern: "{controller=Default}/{action=Index}/{id?}");
 
 // Side-by-side migration: anything this host does not handle falls through to the legacy app.
+// Conventional MVC routes get endpoint Order >= 1 and the forwarder defaults to 0, so without the explicit
+// Order the catch-all would win over every controller route.
 var proxyTo = app.Configuration["ProxyTo"];
 if (!string.IsNullOrWhiteSpace(proxyTo))
 {
-    app.MapForwarder("/{**catch-all}", proxyTo);
+    app.MapForwarder("/{**catch-all}", proxyTo)
+        .Add(static endpoint => ((RouteEndpointBuilder)endpoint).Order = int.MaxValue);
 }
 
 await app.RunAsync();
