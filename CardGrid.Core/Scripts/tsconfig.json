@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [ "es5", "dom" ],
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    "sourceMap": false,
+    "skipLibCheck": true,
+    "outFile": "../wwwroot/js/cardgrid.js"
+  },
+  "files": [
+    "./cardgrid.ts"
+  ]
+}
