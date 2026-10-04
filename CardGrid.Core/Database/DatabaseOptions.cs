@@ -17,7 +17,7 @@ namespace CardGrid.Database
         public string DataDirectory { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to create the database (schema only, via EF6)
+        /// Gets or sets a value indicating whether to create the database (schema only, via EF Core <c>EnsureCreated</c>)
         /// at startup when it does not exist. Never alters an existing database.
         /// </summary>
         public bool CreateIfMissing { get; set; }

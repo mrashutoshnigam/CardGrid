@@ -1,6 +1,7 @@
 using CardGrid.Core.Services;
 using CardGrid.Database;
 using Microsoft.AspNetCore.SystemWebAdapters;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,15 +16,14 @@ builder.Services
     .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
 
 builder.Services.AddOptions<DatabaseOptions>().BindConfiguration(DatabaseOptions.SectionName);
-builder.Services.AddScoped(sp => new CardGridContext(
+builder.Services.AddDbContextPool<CardGridContext>((sp, options) => options.UseSqlServer(
     sp.GetRequiredService<IConfiguration>().GetConnectionString("DatabaseModelContainer")
         ?? throw new InvalidOperationException("Connection string 'DatabaseModelContainer' is not configured.")));
-builder.Services.AddScoped<IEmployeeStore>(sp => sp.GetRequiredService<CardGridContext>());
 builder.Services.AddScoped<EmployeeGridService>();
 
 var app = builder.Build();
 
-app.InitializeCardGridDatabase();
+await app.InitializeCardGridDatabaseAsync();
 
 if (!app.Environment.IsDevelopment())
 {
@@ -50,4 +50,4 @@ if (!string.IsNullOrWhiteSpace(proxyTo))
     app.MapForwarder("/{**catch-all}", proxyTo);
 }
 
-app.Run();
+await app.RunAsync();

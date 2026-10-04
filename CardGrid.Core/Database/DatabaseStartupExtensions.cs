@@ -12,8 +12,8 @@ namespace CardGrid.Database
         /// Call after <c>Build()</c> so late configuration overrides (e.g. from integration tests) are honoured.
         /// </summary>
         /// <param name="app">The built application.</param>
-        /// <returns>The same <paramref name="app"/> for chaining.</returns>
-        public static WebApplication InitializeCardGridDatabase(this WebApplication app)
+        /// <returns>A task that completes when the database is ready.</returns>
+        public static async Task InitializeCardGridDatabaseAsync(this WebApplication app)
         {
             ArgumentNullException.ThrowIfNull(app);
 
@@ -28,16 +28,14 @@ namespace CardGrid.Database
 
             if (!options.CreateIfMissing && !options.SeedOnStartup)
             {
-                return app;
+                return;
             }
 
-            using var scope = app.Services.CreateScope();
+            await using var scope = app.Services.CreateAsyncScope();
             var context = scope.ServiceProvider.GetRequiredService<CardGridContext>();
             var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>()
                 .CreateLogger(typeof(CardGridDatabaseInitializer).FullName);
-            CardGridDatabaseInitializer.Initialize(context, options, logger);
-
-            return app;
+            await CardGridDatabaseInitializer.InitializeAsync(context, options, logger, app.Lifetime.ApplicationStopping);
         }
     }
 }

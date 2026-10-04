@@ -1,5 +1,6 @@
 using CardGrid.Core.Controllers;
 using CardGrid.Core.Services;
+using CardGrid.Database;
 using CardGrid.Models;
 using CardGridTests.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
@@ -13,14 +14,31 @@ namespace CardGridTests.Controllers
     [TestClass]
     public sealed class DefaultControllerTests
     {
-        /// <summary>
-        /// Builds a controller over <paramref name="count"/> in-memory employees.
-        /// </summary>
-        /// <param name="count">Number of employees.</param>
-        /// <returns>The controller under test.</returns>
-        private static DefaultController CreateController(int count = 25)
+        /// <summary>Per-test database with 25 employees.</summary>
+        private SqliteDatabase database;
+
+        /// <summary>Context over <see cref="database"/>.</summary>
+        private CardGridContext context;
+
+        /// <summary>Controller under test.</summary>
+        private DefaultController controller;
+
+        /// <summary>Creates a fresh 25-employee database and controller for each test.</summary>
+        [TestInitialize]
+        public void TestInitialize()
         {
-            return new DefaultController(new EmployeeGridService(new FakeEmployeeStore(TestData.Employees(count))));
+            this.database = new SqliteDatabase(TestData.Employees(25));
+            this.context = this.database.CreateContext();
+            this.controller = new DefaultController(new EmployeeGridService(this.context));
+        }
+
+        /// <summary>Disposes the per-test controller, context and database.</summary>
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            this.controller?.Dispose();
+            this.context?.Dispose();
+            this.database?.Dispose();
         }
 
         /// <summary>
@@ -38,7 +56,7 @@ namespace CardGridTests.Controllers
         [TestMethod]
         public void Index_ReturnsDefaultView()
         {
-            var result = CreateController().Index();
+            var result = this.controller.Index();
 
             var view = Assert.IsInstanceOfType<ViewResult>(result);
             Assert.IsNull(view.ViewName);
@@ -48,10 +66,11 @@ namespace CardGridTests.Controllers
         /// <c>GetData</c> wraps the requested page in JSON. Expected: a <see cref="JsonResult"/> whose value is
         /// the second page of 10 (ids 11..20) with 25 total rows.
         /// </summary>
+        /// <returns>A task representing the test.</returns>
         [TestMethod]
-        public void GetData_ReturnsJsonGridResponse()
+        public async Task GetData_ReturnsJsonGridResponse()
         {
-            var result = CreateController().GetData(new GridRequest { Page = 2, Rows = 10 });
+            var result = await this.controller.GetData(new GridRequest { Page = 2, Rows = 10 }, CancellationToken.None);
 
             var response = Assert.IsInstanceOfType<GridResponse<Employee>>(result.Value);
             Assert.AreEqual(25, response.total);

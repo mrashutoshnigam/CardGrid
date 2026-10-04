@@ -4,13 +4,15 @@ using CardGrid.Database;
 using CardGridTests.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace CardGridTests.Integration
 {
     /// <summary>
-    /// End-to-end HTTP tests of the .NET 10 host with the database replaced by an in-memory store.
+    /// End-to-end HTTP tests of the .NET 10 host with SQL Server replaced by a SQLite in-memory database.
     /// They pin the routes and the JSON contract that <c>cardgrid.js</c> depends on.
     /// </summary>
     [TestClass]
@@ -19,31 +21,38 @@ namespace CardGridTests.Integration
         /// <summary>Shared in-process host.</summary>
         private static WebApplicationFactory<Program> factory;
 
+        /// <summary>Database backing the host; kept open for the class lifetime.</summary>
+        private static SqliteDatabase database;
+
         /// <summary>
         /// Starts one host for the class: "Testing" environment (so no Development create/seed),
-        /// no legacy proxy, and a fake <see cref="IEmployeeStore"/> with 30 employees.
+        /// no legacy proxy, and the pooled SQL Server <see cref="CardGridContext"/> re-registered on SQLite
+        /// in-memory with 30 employees.
         /// </summary>
         /// <param name="context">MSTest context (unused).</param>
         [ClassInitialize]
         public static void ClassInitialize(TestContext context)
         {
+            database = new SqliteDatabase(TestData.Employees(30));
             factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
             {
                 builder.UseEnvironment("Testing");
                 builder.UseSetting("ProxyTo", string.Empty);
                 builder.ConfigureServices(services =>
                 {
-                    services.RemoveAll<IEmployeeStore>();
-                    services.AddSingleton<IEmployeeStore>(new FakeEmployeeStore(TestData.Employees(30)));
+                    // Drop the UseSqlServer configuration so only one provider is registered.
+                    services.RemoveAll<IDbContextOptionsConfiguration<CardGridContext>>();
+                    services.AddDbContextPool<CardGridContext>(options => options.UseSqlite(database.Connection));
                 });
             });
         }
 
-        /// <summary>Disposes the shared host.</summary>
+        /// <summary>Disposes the shared host and database.</summary>
         [ClassCleanup]
         public static void ClassCleanup()
         {
             factory?.Dispose();
+            database?.Dispose();
         }
 
         /// <summary>

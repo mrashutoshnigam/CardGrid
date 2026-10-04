@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using CardGrid.Database;
 using CardGrid.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CardGrid.Core.Services
 {
@@ -12,16 +13,16 @@ namespace CardGrid.Core.Services
         /// <summary>Upper bound on page size, guarding against unbounded result sets.</summary>
         public const int MaxPageSize = 100;
 
-        /// <summary>Employee source.</summary>
-        private readonly IEmployeeStore store;
+        /// <summary>Database context.</summary>
+        private readonly CardGridContext context;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EmployeeGridService"/> class.
         /// </summary>
-        /// <param name="store">Employee source.</param>
-        public EmployeeGridService(IEmployeeStore store)
+        /// <param name="context">Database context.</param>
+        public EmployeeGridService(CardGridContext context)
         {
-            this.store = store ?? throw new ArgumentNullException(nameof(store));
+            this.context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         /// <summary>
@@ -34,8 +35,9 @@ namespace CardGrid.Core.Services
         /// ties are broken by <c>Id</c> so pages are stable.
         /// </remarks>
         /// <param name="request">Search, sort and paging parameters.</param>
+        /// <param name="cancellationToken">Cancels the database queries.</param>
         /// <returns>The requested page plus paging metadata.</returns>
-        public GridResponse<Employee> GetPage(GridRequest request)
+        public async Task<GridResponse<Employee>> GetPageAsync(GridRequest request, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(request);
 
@@ -45,13 +47,13 @@ namespace CardGrid.Core.Services
             var ascending = !string.Equals(request.Sord?.Trim(), "desc", StringComparison.OrdinalIgnoreCase);
             var search = request.SearchParam?.Trim() ?? string.Empty;
 
-            var query = Filter(this.store.Employees, search);
-            var total = query.Count();
+            var query = Filter(this.context.Employees.AsNoTracking(), search);
+            var total = await query.CountAsync(cancellationToken);
 
             var skip = (long)(page - 1) * rows;
             var data = skip >= total
                 ? new List<Employee>()
-                : Sort(query, sidx, ascending).Skip((int)skip).Take(rows).ToList();
+                : await Sort(query, sidx, ascending).Skip((int)skip).Take(rows).ToListAsync(cancellationToken);
 
             return new GridResponse<Employee>
             {

@@ -32,11 +32,12 @@ namespace CardGrid.Core.Controllers
 
         /// <summary>Returns one page of employees for the card grid.</summary>
         /// <param name="request">Search, sort and paging parameters from the query string.</param>
+        /// <param name="cancellationToken">Signalled when the client disconnects.</param>
         /// <returns>A JSON <see cref="GridResponse{T}"/> of employees.</returns>
         [HttpGet]
-        public JsonResult GetData([FromQuery] GridRequest request)
+        public async Task<JsonResult> GetData([FromQuery] GridRequest request, CancellationToken cancellationToken)
         {
-            return Json(this.gridService.GetPage(request));
+            return Json(await this.gridService.GetPageAsync(request, cancellationToken));
         }
     }
 }

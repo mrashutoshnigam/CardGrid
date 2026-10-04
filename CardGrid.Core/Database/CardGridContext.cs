@@ -1,48 +1,48 @@
-using System.Data.Entity;
-using System.Data.Entity.SqlServer;
 using CardGrid.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CardGrid.Database
 {
     /// <summary>
-    /// EF6 context for the CardGrid database, running on .NET 10 with the
-    /// <c>Microsoft.Data.SqlClient</c>-based provider.
+    /// EF Core context for the CardGrid database.
     /// </summary>
     /// <remarks>
-    /// <para>
-    /// The type name and namespace match the legacy context so both hosts resolve the same
-    /// EF6 context key and model while they share a database.
-    /// </para>
-    /// <para>
-    /// Unlike the legacy context, this one never creates or seeds the database implicitly; that is
-    /// an explicit startup step (<see cref="CardGridDatabaseInitializer"/>), so instantiating a
-    /// context per request costs no extra round trips.
-    /// </para>
+    /// The mapping reproduces the schema EF6 created for the legacy app (<c>dbo.Employees</c>,
+    /// <c>datetime</c> date columns, <c>nvarchar(max)</c> strings) so both hosts can share one database
+    /// during the side-by-side migration. The context never creates or seeds the database implicitly;
+    /// see <see cref="CardGridDatabaseInitializer"/>.
     /// </remarks>
-    [DbConfigurationType(typeof(MicrosoftSqlDbConfiguration))]
-    public class CardGridContext : DbContext, IEmployeeStore
+    public class CardGridContext : DbContext
     {
-        /// <summary>
-        /// Disables EF6's implicit database initializer so no schema work happens on first use.
-        /// </summary>
-        static CardGridContext()
-        {
-            System.Data.Entity.Database.SetInitializer<CardGridContext>(null);
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="CardGridContext"/> class.
         /// </summary>
-        /// <param name="connectionString">SQL Server connection string.</param>
-        public CardGridContext(string connectionString)
-            : base(connectionString)
+        /// <param name="options">Provider and connection configuration.</param>
+        public CardGridContext(DbContextOptions<CardGridContext> options)
+            : base(options)
         {
         }
 
-        /// <summary>Gets or sets the employees table.</summary>
-        public DbSet<Employee> Employees { get; set; }
+        /// <summary>Gets the employees table.</summary>
+        public DbSet<Employee> Employees => Set<Employee>();
 
         /// <inheritdoc />
-        IQueryable<Employee> IEmployeeStore.Employees => Employees.AsNoTracking();
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            ArgumentNullException.ThrowIfNull(modelBuilder);
+
+            modelBuilder.Entity<Employee>(entity =>
+            {
+                entity.ToTable("Employees", "dbo");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+
+                // EF6 mapped DateTime to datetime; EF Core would default to datetime2.
+                entity.Property(e => e.BirthDate).HasColumnType("datetime");
+                entity.Property(e => e.HireDate).HasColumnType("datetime");
+
+                entity.Ignore(e => e.PhotoUrl);
+            });
+        }
     }
 }

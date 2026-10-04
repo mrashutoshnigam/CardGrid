@@ -1,12 +1,14 @@
 using System.Text.RegularExpressions;
 using CardGrid.Database;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace CardGridTests.Database
 {
     /// <summary>
-    /// Validates the database initializer pieces that do not need SQL Server: argument guards and
-    /// the embedded seed script.
+    /// Validates the database initializer pieces that do not need SQL Server: argument guards, the embedded
+    /// seed script, <c>|DataDirectory|</c> expansion and provider-neutral schema creation (on SQLite).
     /// </summary>
     [TestClass]
     public sealed class CardGridDatabaseInitializerTests
@@ -27,23 +29,88 @@ namespace CardGridTests.Database
         }
 
         /// <summary>
-        /// <c>Initialize</c> validates its arguments before touching the database.
+        /// <c>InitializeAsync</c> validates its arguments before touching the database.
         /// Expected: <see cref="ArgumentNullException"/> for a null context.
         /// </summary>
+        /// <returns>A task representing the test.</returns>
         [TestMethod]
-        public void Initialize_NullContext_Throws()
+        public async Task InitializeAsync_NullContext_Throws()
         {
-            Assert.ThrowsExactly<ArgumentNullException>(
-                () => CardGridDatabaseInitializer.Initialize(null, new DatabaseOptions(), NullLogger.Instance));
+            await Assert.ThrowsExactlyAsync<ArgumentNullException>(
+                () => CardGridDatabaseInitializer.InitializeAsync(null, new DatabaseOptions(), NullLogger.Instance));
         }
 
         /// <summary>
-        /// <c>Seed</c> validates its argument. Expected: <see cref="ArgumentNullException"/> for a null context.
+        /// <c>SeedAsync</c> validates its argument. Expected: <see cref="ArgumentNullException"/> for a null context.
         /// </summary>
+        /// <returns>A task representing the test.</returns>
         [TestMethod]
-        public void Seed_NullContext_Throws()
+        public async Task SeedAsync_NullContext_Throws()
         {
-            Assert.ThrowsExactly<ArgumentNullException>(() => CardGridDatabaseInitializer.Seed(null));
+            await Assert.ThrowsExactlyAsync<ArgumentNullException>(() => CardGridDatabaseInitializer.SeedAsync(null));
+        }
+
+        /// <summary>
+        /// With creation enabled on a non-SQL Server provider, initialization defers to EF Core's EnsureCreated.
+        /// Expected: an empty SQLite database gets the Employees table; a second call reports nothing created.
+        /// </summary>
+        /// <returns>A task representing the test.</returns>
+        [TestMethod]
+        public async Task InitializeAsync_CreateIfMissing_CreatesSchemaOnce()
+        {
+            using var connection = new SqliteConnection("DataSource=:memory:");
+            await connection.OpenAsync();
+            var options = new DbContextOptionsBuilder<CardGridContext>().UseSqlite(connection).Options;
+            var settings = new DatabaseOptions { CreateIfMissing = true };
+
+            await using (var context = new CardGridContext(options))
+            {
+                await CardGridDatabaseInitializer.InitializeAsync(context, settings, NullLogger.Instance);
+            }
+
+            await using (var context = new CardGridContext(options))
+            {
+                Assert.AreEqual(0, await context.Employees.CountAsync());
+                Assert.IsFalse(await context.Database.EnsureCreatedAsync());
+            }
+        }
+
+        /// <summary>
+        /// <c>|DataDirectory|</c> expands against the AppDomain value, with or without a separator after the token.
+        /// Expected: both forms resolve to the same full path under the configured directory.
+        /// </summary>
+        /// <param name="input">Path containing the token.</param>
+        [TestMethod]
+        [DataRow(@"|DataDirectory|\Db.mdf")]
+        [DataRow("|DataDirectory|Db.mdf")]
+        [DataRow("|datadirectory|/Db.mdf")]
+        public void ExpandDataDirectory_ReplacesToken(string input)
+        {
+            var original = AppDomain.CurrentDomain.GetData("DataDirectory");
+            var root = Path.Combine(Path.GetTempPath(), "cardgrid-datadir");
+            try
+            {
+                AppDomain.CurrentDomain.SetData("DataDirectory", root);
+
+                Assert.AreEqual(Path.Combine(root, "Db.mdf"), CardGridDatabaseInitializer.ExpandDataDirectory(input));
+            }
+            finally
+            {
+                AppDomain.CurrentDomain.SetData("DataDirectory", original);
+            }
+        }
+
+        /// <summary>
+        /// Paths without the token (or empty) are returned unchanged. Expected: identity.
+        /// </summary>
+        /// <param name="input">Path without the token.</param>
+        [TestMethod]
+        [DataRow(null)]
+        [DataRow("")]
+        [DataRow(@"C:\data\Db.mdf")]
+        public void ExpandDataDirectory_NoToken_Unchanged(string input)
+        {
+            Assert.AreEqual(input, CardGridDatabaseInitializer.ExpandDataDirectory(input));
         }
 
         /// <summary>

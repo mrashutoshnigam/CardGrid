@@ -1,11 +1,11 @@
 namespace CardGrid.Models
 {
     /// <summary>
-    /// Employee record displayed by the card grid. Mapped by EF6 to the <c>Employees</c> table.
+    /// Employee record displayed by the card grid. Mapped by EF Core to the <c>dbo.Employees</c> table.
     /// </summary>
     /// <remarks>
-    /// The namespace intentionally matches the legacy <c>CardGrid</c> project so the EF6 model
-    /// (and its <c>__MigrationHistory</c> hash) stays identical while both hosts share one database.
+    /// The namespace intentionally matches the legacy <c>CardGrid</c> project so the EF Core context
+    /// and the legacy EF6 context map the same table while both hosts share one database.
     /// </remarks>
     public class Employee
     {
@@ -35,7 +35,7 @@ namespace CardGrid.Models
 
         /// <summary>
         /// Gets the relative URL of the employee's photo. Computed, not persisted
-        /// (EF6 ignores read-only properties).
+        /// (explicitly ignored in <c>CardGridContext</c>).
         /// </summary>
         public string PhotoUrl => @"\Photos\" + Id + ".jpg";
     }
