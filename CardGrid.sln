@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26403.0
+# Visual Studio Version 18
+VisualStudioVersion = 18.11.12224.323 insiders
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardGrid", "CardGrid\CardGrid.csproj", "{C793EDE7-9E3E-420E-9E95-C7B1C32716B2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardGridTests", "CardGridTests\CardGridTests.csproj", "{04470F76-1E07-404B-9E13-733CD988C0D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardGrid.Core", "CardGrid.Core\CardGrid.Core.csproj", "{7FAD5A9C-5428-5330-58ED-82D5298E2899}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{04470F76-1E07-404B-9E13-733CD988C0D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04470F76-1E07-404B-9E13-733CD988C0D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04470F76-1E07-404B-9E13-733CD988C0D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FAD5A9C-5428-5330-58ED-82D5298E2899}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FAD5A9C-5428-5330-58ED-82D5298E2899}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FAD5A9C-5428-5330-58ED-82D5298E2899}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FAD5A9C-5428-5330-58ED-82D5298E2899}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

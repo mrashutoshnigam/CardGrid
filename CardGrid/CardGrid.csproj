@@ -27,6 +27,7 @@
     <TypeScriptToolsVersion>2.1</TypeScriptToolsVersion>
     <TargetFrameworkProfile />
     <Use64BitIISExpress />
+    <_MigrateToProjectGuid>7fad5a9c-5428-5330-58ed-82d5298e2899</_MigrateToProjectGuid>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -125,12 +126,9 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\CardGridDB.mdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="App_Data\CardGridDB.mdf" />
     <Content Include="App_Data\CardGridDB_log.ldf">
       <DependentUpon>CardGridDB.mdf</DependentUpon>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />

@@ -1,0 +1,14 @@
+{
+  "scenarioId": "dotnet-version-upgrade",
+  "operationId": "b8a61b38-f0c8-4ca5-b006-52e0149d4857",
+  "description": "Upgrade .NET projects to newer .NET versions, including guidance on current release status, support lifecycle (LTS/STS), and recommended upgrade targets.",
+  "startTime": "2026-10-04T11:14:17.1005102Z",
+  "lastUpdateTime": "2026-10-04T12:03:23.19256Z",
+  "properties": {
+    "taskStates": {
+      "01-prerequisites": "Completed",
+      "02-scaffold-cardgrid-web": "Completed"
+    }
+  },
+  "folderPath": ""
+}
