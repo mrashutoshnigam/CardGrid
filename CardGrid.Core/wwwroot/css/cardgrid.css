@@ -1,0 +1,79 @@
+/* Card grid styles, ported from the legacy Content/cardgrid.css for Bootstrap 5. */
+body {
+    /* Room for the fixed-top navbar (Bootstrap 5 navbar is taller than Bootstrap 3's). */
+    padding-top: 70px;
+    padding-bottom: 20px;
+}
+
+.x_title {
+    margin: 15px 0;
+}
+
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+.card-paginaton {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.card-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+    .card-row > [class*='col-'] {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-row .thumbnail,
+    .card-row .caption {
+        flex-direction: column;
+        display: flex;
+        flex: 1 0 auto;
+        height: auto;
+        position: relative;
+    }
+
+    .card-row table tr {
+        cursor: pointer;
+    }
+
+        .card-row table tr[selected="selected"] > td {
+            border: 1px solid #73879C;
+            color: indianred;
+        }
+
+.card-row img {
+    min-width: 0;
+    width: 100%;
+}
+
+.thumbnail {
+    overflow: hidden;
+    padding: 4px;
+    cursor: pointer;
+    font-size: 15px !important;
+}
+
+    .thumbnail h5 {
+        font-size: 12px !important;
+    }
+
+    .thumbnail[selected="selected"] {
+        border: 1px solid #73879C;
+        background-color: #f1f4f7;
+        transition: background-color 0.5s ease;
+    }
+
+    .thumbnail:hover {
+        border: 1px solid #003973;
+    }
+
+.col-center {
+    text-align: center;
+}
