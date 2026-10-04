@@ -18,6 +18,10 @@
     <EmbeddedResource Include="Database\Seed\Employees.sql" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="CardGridTests" />
+  </ItemGroup>
+
   <!-- TypeScript source for wwwroot/js/cardgrid.js; compiled manually (see Scripts/README.md), never published. -->
   <ItemGroup>
     <Content Remove="Scripts\**" />
